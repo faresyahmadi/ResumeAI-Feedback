@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResumeAI - Resume Analysis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2c3e50;
+            text-decoration: none;
+        }
+
+        .logo-subtitle {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .welcome-title {
+            font-size: 2rem;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .welcome-text {
+            font-size: 1.1rem;
+            color: #34495e;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            width: 100%;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #3498db;
+        }
+
+        .feature-title {
+            font-size: 1.1rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-text {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            line-height: 1.4;
+        }
+
+        .upload-container {
+            width: 100%;
+            max-width: 600px;
+            height: 300px;
+            border: 2px dashed #3498db;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: white;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-bottom: 2rem;
+        }
+
+        .upload-container:hover {
+            border-color: #2980b9;
+            background-color: #f8f9fa;
+        }
+
+        .upload-container.dragover {
+            border-color: #2ecc71;
+            background-color: #f0f9f0;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: #3498db;
+            margin-bottom: 1rem;
+        }
+
+        .upload-text {
+            font-size: 1.2rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .upload-subtext {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            text-align: center;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .success-message {
+            color: #2ecc71;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .loading {
+            display: none;
+            margin-top: 1rem;
+            color: #3498db;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid #3498db;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            margin-left: 0.5rem;
+        }
+
+        .footer {
+            background-color: white;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+        }
+
+        .footer-text {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        .footer-link {
+            color: #3498db;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .footer-link:hover {
+            text-decoration: underline;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .features {
+                grid-template-columns: 1fr;
+            }
+            
+            .welcome-title {
+                font-size: 1.5rem;
+            }
+            
+            .welcome-text {
+                font-size: 1rem;
+            }
+        }
+
+        .progress-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 1rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .progress-steps::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #e0e0e0;
+            z-index: 1;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            background: white;
+            padding: 0.5rem;
+        }
+
+        .step-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-text {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+
+        .progress-step.active .step-icon {
+            color: #3498db;
+        }
+
+        .progress-step.active .step-text {
+            color: #3498db;
+            font-weight: 500;
+        }
+
+        .progress-step.completed .step-icon {
+            color: #2ecc71;
+        }
+
+        .progress-step.completed .step-text {
+            color: #2ecc71;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo-container">
+            <a href="/" class="logo">ResumeAI</a>
+            <span class="logo-subtitle">AI-Powered Resume Analysis</span>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <section class="welcome-section">
+            <h1 class="welcome-title">Get Professional Resume Feedback</h1>
+            <p class="welcome-text">Upload your resume and receive detailed analysis, personalized recommendations, and market insights powered by AI.</p>
+        </section>
+
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3 class="feature-title">Smart Analysis</h3>
+                <p class="feature-text">AI-powered analysis of your resume's content, structure, and impact</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3 class="feature-title">Market Insights</h3>
+                <p class="feature-text">Compare your resume against industry standards and job requirements</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💡</div>
+                <h3 class="feature-title">Actionable Tips</h3>
+                <p class="feature-text">Get personalized recommendations to improve your resume</p>
+            </div>
+        </div>
+
+        <div class="upload-container" id="dropZone">
+            <div class="upload-icon">📄</div>
+            <div class="upload-text">Drag and drop your resume here</div>
+            <div class="upload-subtext">or click to select a file (PDF or Word, max 100MB)</div>
+            <input type="file" class="file-input" id="fileInput" accept=".pdf,.doc,.docx" max="100000000">
+        </div>
+
+        <div class="progress-container" id="progressContainer" style="display: none;">
+            <div class="progress-steps">
+                <div class="progress-step active" id="uploadStep">
+                    <div class="step-icon">📤</div>
+                    <div class="step-text">Uploading</div>
+                </div>
+                <div class="progress-step" id="processStep">
+                    <div class="step-icon">⚙️</div>
+                    <div class="step-text">Processing</div>
+                </div>
+                <div class="progress-step" id="emailStep">
+                    <div class="step-icon">📧</div>
+                    <div class="step-text">Sending Email</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+        <div class="success-message" id="successMessage"></div>
+        <div class="loading" id="loading">Processing your resume...</div>
+    </main>
+
+    <footer class="footer">
+        <p class="footer-text">Your resume data is processed securely and never shared with third parties</p>
+        <div class="footer-links">
+            <a href="#" class="footer-link">Privacy Policy</a>
+            <a href="#" class="footer-link">Terms of Service</a>
+            <a href="#" class="footer-link">Contact Us</a>
+        </div>
+    </footer>
+
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
+        const loading = document.getElementById('loading');
+
+        // Handle drag and drop events
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight(e) {
+            dropZone.classList.add('dragover');
+        }
+
+        function unhighlight(e) {
+            dropZone.classList.remove('dragover');
+        }
+
+        // Handle file drop
+        dropZone.addEventListener('drop', handleDrop, false);
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+
+        // Handle file selection
+        fileInput.addEventListener('change', function() {
+            handleFiles(this.files);
+        });
+
+        function handleFiles(files) {
+            if (files.length > 0) {
+                const file = files[0];
+                if (validateFile(file)) {
+                    uploadFile(file);
+                }
+            }
+        }
+
+        function validateFile(file) {
+            const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+            const maxSize = 100 * 1024 * 1024; // 100MB in bytes
+
+            if (!validTypes.includes(file.type)) {
+                showError('Please upload a PDF or Word document');
+                return false;
+            }
+
+            if (file.size > maxSize) {
+                showError('File size must be less than 100MB');
+                return false;
+            }
+
+            return true;
+        }
+
+        function updateProgress(step) {
+            const steps = ['uploadStep', 'processStep', 'emailStep'];
+            const progressContainer = document.getElementById('progressContainer');
+            
+            progressContainer.style.display = 'block';
+            
+            steps.forEach((stepId, index) => {
+                const stepElement = document.getElementById(stepId);
+                if (index < step) {
+                    stepElement.classList.add('completed');
+                } else if (index === step) {
+                    stepElement.classList.add('active');
+                } else {
+                    stepElement.classList.remove('active', 'completed');
+                }
+            });
+        }
+
+        function uploadFile(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            showLoading('Uploading your resume...');
+            updateProgress(0);
+            hideError();
+            hideSuccess();
+
+            fetch('/api/upload-resume', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'success') {
+                    updateProgress(1);
+                    showSuccess('✨ Resume uploaded successfully! The system will now process it and send you feedback via email.');
+                    fileInput.value = '';
+                } else {
+                    showError(data.message || 'Error uploading resume');
+                }
+            })
+            .catch(error => {
+                console.error('Upload error:', error);
+                showError('Error uploading resume. Please try again.');
+            })
+            .finally(() => {
+                hideLoading();
+                setTimeout(() => {
+                    document.getElementById('progressContainer').style.display = 'none';
+                }, 2000);
+            });
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+        }
+
+        function hideError() {
+            errorMessage.style.display = 'none';
+        }
+
+        function showSuccess(message) {
+            successMessage.textContent = message;
+            successMessage.style.display = 'block';
+            // Add a nice animation
+            successMessage.style.opacity = '0';
+            successMessage.style.transform = 'translateY(-10px)';
+            successMessage.style.transition = 'all 0.3s ease';
+            
+            // Trigger reflow
+            successMessage.offsetHeight;
+            
+            successMessage.style.opacity = '1';
+            successMessage.style.transform = 'translateY(0)';
+            
+            // Hide after 5 seconds
+            setTimeout(() => {
+                successMessage.style.opacity = '0';
+                successMessage.style.transform = 'translateY(-10px)';
+                setTimeout(() => {
+                    successMessage.style.display = 'none';
+                }, 300);
+            }, 5000);
+        }
+
+        function hideSuccess() {
+            successMessage.style.display = 'none';
+        }
+
+        function showLoading(message) {
+            loading.textContent = message;
+            loading.style.display = 'block';
+            // Add a nice animation
+            loading.style.opacity = '0';
+            loading.style.transform = 'translateY(-10px)';
+            loading.style.transition = 'all 0.3s ease';
+            
+            // Trigger reflow
+            loading.offsetHeight;
+            
+            loading.style.opacity = '1';
+            loading.style.transform = 'translateY(0)';
+        }
+
+        function hideLoading() {
+            loading.style.opacity = '0';
+            loading.style.transform = 'translateY(-10px)';
+            setTimeout(() => {
+                loading.style.display = 'none';
+            }, 300);
+        }
+    </script>
+</body>
+</html> 
