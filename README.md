@@ -28,10 +28,8 @@ GOOGLE_DRIVE_CREDENTIALS=path_to_credentials.json
 OPENAI_API_KEY=your_openai_key
 SUPABASE_URL=your_supabase_url
 SUPABASE_KEY=your_supabase_key
-SMTP_SERVER=your_smtp_server
-SMTP_PORT=your_smtp_port
-SMTP_USERNAME=your_smtp_username
-SMTP_PASSWORD=your_smtp_password
+GMAIL_CREDENTIAL = path_to_credential.json
+GMAIL_SENDER = your_gmail_address
 ```
 
 2. Install dependencies:
@@ -45,10 +43,17 @@ pip install -r requirements.txt
    - Create credentials and download the JSON file
    - Place the credentials file in the config directory
 
-4. Run the application:
+4. Run the backend:
 ```bash
 python main.py
 ```
+
+5. Open a new Terminal window and Run the frontend:
+```bash
+python app.py
+```
+
+5. Upload your resume & Check your email
 
 ## Features
 
