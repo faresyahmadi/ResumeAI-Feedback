@@ -62,3 +62,6 @@ python app.py
 - AI-powered resume analysis using GPT
 - Comparison with best practices database
 - Automated email feedback delivery 
+
+![Capture d’écran 2025-04-16 135048](https://github.com/user-attachments/assets/71f202d9-458e-42c3-b0f6-ed520738d227)
+
